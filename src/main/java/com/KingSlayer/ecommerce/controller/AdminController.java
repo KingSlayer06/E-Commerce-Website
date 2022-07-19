@@ -28,7 +28,7 @@ public class AdminController {
     private ProductService productService;
 
     // Admin Home Page //
-    @GetMapping("/home")
+    @GetMapping({"/","/home"})
     public String adminHome() {
         return "adminHome";
     }
@@ -113,7 +113,12 @@ public class AdminController {
     }
 
     @GetMapping("/products/delete/{id}")
-    public String deleteProducts(@PathVariable("id") int id) {
+    public String deleteProducts(@PathVariable("id") int id) throws IOException {
+
+        String imageUUID = productService.findById(id).getImageName();
+        Path filePath = Paths.get(uploadDirectory, imageUUID);
+        Files.delete(filePath);
+
         productService.deleteById(id);
         return "redirect:/admin/products";
     }
