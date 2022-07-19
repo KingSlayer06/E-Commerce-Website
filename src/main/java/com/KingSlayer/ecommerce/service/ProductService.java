@@ -20,7 +20,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product findById(int id) {
+    public Product findById(long id) {
         return productRepository.findById(id).get();
     }
 
@@ -29,7 +29,12 @@ public class ProductService {
         productRepository.save(product);
     }
     @Transactional
-    public void deleteById(int id) {
+    public void deleteById(long id) {
         productRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<Product> findAllByCategoryId(int id) {
+        return productRepository.findAllByCategory_Id(id);
     }
 }
