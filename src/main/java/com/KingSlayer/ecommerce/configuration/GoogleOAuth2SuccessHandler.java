@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -32,12 +33,12 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        FilterChain chain, Authentication authentication) throws IOException {
+                                        Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
 
         String email = token.getPrincipal().getAttributes().get("email").toString();
         String firstName = token.getPrincipal().getAttributes().get("given_name").toString();
-        String lastName = token.getPrincipal().getAttributes().get("family_name").toString();
+        Object lastName = token.getPrincipal().getAttributes().get("family_name");
 
         List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.findById(2).get());
@@ -45,20 +46,17 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         if (!userRepository.findUserByEmail(email).isPresent()) {
             User user = User.builder()
                     .firstName(firstName)
-                    .lastName(lastName)
                     .email(email)
                     .roles(roles)
                     .build();
+
+            // Handle lastName null exception
+            if (lastName != null)
+                user.setLastName(lastName.toString());
 
             userRepository.save(user);
         }
 
         redirectStrategy.sendRedirect(request, response, "/");
-    }
-
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
-
     }
 }
