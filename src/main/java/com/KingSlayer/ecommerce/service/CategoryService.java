@@ -27,6 +27,7 @@ public class CategoryService {
     public void save(Category category) {
         categoryRepository.save(category);
     }
+
     @Transactional
     public void deleteById(int id) {
         categoryRepository.deleteById(id);

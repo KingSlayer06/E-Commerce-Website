@@ -1,5 +1,6 @@
 package com.KingSlayer.ecommerce.controller;
 
+import com.KingSlayer.ecommerce.global.GlobalData;
 import com.KingSlayer.ecommerce.service.CategoryService;
 import com.KingSlayer.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ public class HomeController {
     private CategoryService categoryService;
 
     @GetMapping({"/","/home"})
-    public String home() {
+    public String home(Model model) {
+        model.addAttribute("cartCount", GlobalData.cart.size());
         return "index";
     }
 
@@ -27,6 +29,7 @@ public class HomeController {
     public String shop(Model model) {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("products", productService.findAll());
+        model.addAttribute("cartCount", GlobalData.cart.size());
         return "shop";
     }
 
@@ -34,12 +37,14 @@ public class HomeController {
     public String shopByCategory(@PathVariable("id") int id, Model model) {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("products", productService.findAllByCategoryId(id));
+        model.addAttribute("cartCount", GlobalData.cart.size());
         return "shop";
     }
 
     @GetMapping("/shop/viewproduct/{id}")
     public String viewProduct(@PathVariable("id") int id, Model model) {
         model.addAttribute("product", productService.findById(id));
+        model.addAttribute("cartCount", GlobalData.cart.size());
         return "viewProduct";
     }
 }
