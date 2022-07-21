@@ -52,4 +52,9 @@ public class CartController {
         model.addAttribute("total", GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
         return "checkout";
     }
+
+    @GetMapping("/orderPlaced")
+    public String orderPlaced(Model model) {
+        return "orderPlaced";
+    }
 }
